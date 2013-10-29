@@ -98,7 +98,7 @@ _graphicsDOMX = new function() { var _graphics = this;
       }
     }
     // rendering window
-    css('._renderingWindowDOM', '{background-color: white; position: relative; overflow: auto;}');
+    css('._renderingWindowDOM', '{background-color: white; position: relative; overflow: auto; overflow: hidden;}');
     // tile properties
     css('._renderingWindowDOM .chunkcontainer', '{position: absolute; background-color:red;}');
     css('._renderingWindowDOM .chunk', '{position: absolute;}');
