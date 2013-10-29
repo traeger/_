@@ -23,7 +23,8 @@ THE SOFTWARE.
 """
 
 import os, sys
-sys.path[0] = os.path.join(sys.path[0],'py')
+sys.path[0] = os.path.join(sys.path[0],'server')
+print sys.path
 
 import random
 import string
