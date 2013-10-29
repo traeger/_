@@ -16,7 +16,7 @@ install
         $ pip install noise
         ```
 
-    -   gevent-websocket
+    -   gevent-websocket (https://bitbucket.org/Jeffrey/gevent-websocket/)
         ```
         clone the branch 'default' from https://bitbucket.org/Jeffrey/gevent-websocket/src
         ```
