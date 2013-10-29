@@ -1,0 +1,25 @@
+﻿/*********/
+The following tilesets are published on http://opengameart.org/
+and all honor goes the the authors/original authors.
+Thanks a lot for providing them!
+
+tileset_desert.png
+  author: Amstrad
+  url: http://opengameart.org/content/desert-tileset
+  license: http://creativecommons.org/licenses/by-sa/3.0/
+
+grassland_tiles.png
+  author: Clint Bellanger
+  url: http://opengameart.org/content/grassland-tileset
+  license: http://creativecommons.org/licenses/by-sa/3.0/
+
+tileset_cave_1.png
+  author: Clint Bellanger
+  url: http://opengameart.org/content/cave-tileset
+  license: http://creativecommons.org/licenses/by/3.0/
+
+/*********/
+The .js files to setup a tileset, namely
+  tileset_grassland.js
+  tileset_cave.js
+are free to use and under on license at all.

@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            h1,h2,h3,h4,h5 {font-family: monospace}
+            h4,h5 {display: inline}
+            #_conn {
+                z-index: 101; position: absolute; top: 0; right: 0;
+                color: white;
+                background-color: black;
+            }
+            .renderingWindow {
+                float: left;
+            }
+        </style>
+        <title>_ - a websocket&domsprite _-client</title>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="static/mersenne-twister.js"></script>
+        <script type="text/javascript" src="static/_.js"></script>
+        <script type="text/javascript" src="static/_graphicsDOMX.js"></script>
+        <script type="text/javascript" src="static/_graphicsASCII.js"></script>
+        <script type="text/javascript" src="static/_vis.js"></script>
+        <script type="text/javascript" src="static/tiles/tileset_grassland.js"></script>
+        <script type="text/javascript" src="static/tiles/tileset_cave.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                _graphicsDOMX.init(64,32,_vis.terrainTileMapper,_vis.objectTileMapper);
+                _.createRenderingWindow(_graphicsDOMX, '#wnd', 1000, 700, true);
+                
+                //_graphicsASCII.init();
+                //_.createRenderingWindow(_graphicsASCII, '#wnd2', 600, 400);
+                
+                _.start();
+                
+                //_.setGraphics(_graphicsASCII, '#wnd2', 500, 300);
+                //_graphics.renderTilemap(0, 0);
+                _.chunk(2,1,{terrain : 'GGSGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGSSSSSS'+'GGGSSSSS'+'GSSSSSSS', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(2,2,{terrain : 'GGGSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(3,1,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GWWWWWGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(3,2,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                
+                _graphicsDOMX.renderChunk(2,1);
+                _graphicsDOMX.renderChunk(2,2);
+                _graphicsDOMX.renderChunk(3,1);
+                _graphicsDOMX.renderChunk(3,2);
+                
+                _graphicsDOMX.renderViewport()
+                
+                //_graphicsASCII.renderChunk(0,0);
+                //_graphicsASCII.renderChunk(0,1);
+                //_graphicsASCII.renderChunk(1,1);
+                //_graphicsASCII.renderChunk(1,2);
+            });
+        </script>
+    </head>
+    <body>
+        <h1>_ - a websocket&domsprite _-client</h1>
+        <div id="wnd" class="renderingWindow"></div>
+        <div id="wnd2" class="renderingWindow"></div>
+        <div id="_conn">
+            <div id="_conn_status">Not Connected</div>
+            <div id="_data_in"></div>
+        </div>
+    </body>
+</html>
