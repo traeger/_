@@ -47,6 +47,8 @@ A screenshot of the ingame view in the javascript client _.js
 
 ![alt text](https://raw.github.com/traeger/_/master/images/worldgen_example_02.png "(imageview)")
 
+(the tileset licenses are listed in client/static/tilesets/LICENSE)
+
 ### biome generation
 
 The world generation can be tested with
