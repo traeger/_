@@ -37,3 +37,18 @@ install
 *   open the `index.html` in any browser to start the client
 
 *   have fun!
+
+world generation
+----------------
+
+the world generation can be tested with
+```
+cd server/test/world
+python test_worldgen.py
+```
+which generates a view on a part(40,000 km x 20,000 km) of the generated world
+
+![alt text](https://github.com/traeger/_/images/worldgen_example_01.png "(biomes of the world)")
+
+(biomes of the world, 1pixel=100km, yellow=desert, lightgreen/brown=jungle, green=grass, gray=barerock, darkgray=tundra, white=snow, blue=ocean)
+
