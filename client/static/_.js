@@ -25,7 +25,7 @@ THE SOFTWARE.
 _ = new function() { var _ = this;
     var CHUNK_SIZE = 8;
 
-    _.TILESET_DIR = 'static/tiles/';
+    _.TILESET_DIR = 'client/static/tiles/';
     _.CHUNK_SIZE = CHUNK_SIZE;
     _.CHUNK_MISS = {
         data : {

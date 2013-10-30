@@ -34,15 +34,19 @@
                 
                 //_.setGraphics(_graphicsASCII, '#wnd2', 500, 300);
                 //_graphics.renderTilemap(0, 0);
-                _.chunk(2,1,{terrain : 'GGSGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGSSSSSS'+'GGGSSSSS'+'GSSSSSSS', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
-                _.chunk(2,2,{terrain : 'GGGSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
-                _.chunk(3,1,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GWWWWWGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
-                _.chunk(3,2,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(1,0,{terrain : 'GGSGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGWWWWG'+'GGGGGWWG'+'GGSSGGGG'+'GGSSGGGG'+'GSGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(1,1,{terrain : 'GGSGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGWWWGGG'+'GGGWWWWG'+'GGGWWWGG', objects: '________'+'________'+'__T_____'+'________'+'______T_'+'________'+'________'+'________'});
+                _.chunk(2,0,{terrain : 'GGSGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGSSSSS'+'GGGSSSSS'+'GSSSSSSS', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(2,1,{terrain : 'GGGSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGSSSSSS'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: '________'+'________'+'________'+'________'+'________'+'______T_'+'________'+'________'});
+                _.chunk(3,0,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GGWWWWWG'+'GWWWWWGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
+                _.chunk(3,1,{terrain : 'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG'+'GGGGGGGG', objects: Array(_.CHUNK_SIZE*_.CHUNK_SIZE+1).join('_')});
                 
+                _graphicsDOMX.renderChunk(1,0);
+                _graphicsDOMX.renderChunk(1,1);
+                _graphicsDOMX.renderChunk(2,0);
                 _graphicsDOMX.renderChunk(2,1);
-                _graphicsDOMX.renderChunk(2,2);
+                _graphicsDOMX.renderChunk(3,0);
                 _graphicsDOMX.renderChunk(3,1);
-                _graphicsDOMX.renderChunk(3,2);
                 
                 _graphicsDOMX.renderViewport()
                 
