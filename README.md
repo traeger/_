@@ -20,7 +20,7 @@ install
         ```
         clone the branch 'default' from https://bitbucket.org/Jeffrey/gevent-websocket/src
         ```
-        and than install it with:
+        and then install it with:
         ```
         $ python setup.py install
         ```
@@ -33,5 +33,7 @@ install
     ```
     $ python _.py
     ```
+
+*   open the `index.html` in any browser to start the client
 
 *   have fun!
