@@ -30,9 +30,7 @@ from _.constants import *
 #extensions imports
 from _.extension import Extension
 import player
-
-#additional imports
-from _.world.chunkgenerator_world import Chunkgenerator
+import chunkprovider
 
 import logging
 logger = logging.getLogger(__name__)
@@ -42,8 +40,9 @@ VIEW_CHUNKSBUFFER_Y = 6
 
 class ExtensionBase(Extension):
   def on_setup(self):
-    self.chuckGenerator = Chunkgenerator(367598)
-    self.TMP_chunk = numpy.zeros((CHUNK_DIMS, CHUNK_SIZE, CHUNK_SIZE), dtype='|S1')
+    self.chuckprovider = chunkprovider.Chunkprovider(367598)
+    self.TMP_chunk = self.chuckprovider.generateTempChunk()
+    
     self.player = player.Player()
     self.player.randomizeStartLocation()
     
@@ -51,7 +50,7 @@ class ExtensionBase(Extension):
     self.addMessageHandler('move_delta', self.handle_move_delta)
     
   def send_chunk(self, cx, cy):
-    self.chuckGenerator.chunk(cx, cy, self.TMP_chunk)
+    self.chuckprovider.chunk(cx, cy, self.TMP_chunk)
     data = {
       'cx': cx,
       'cy': cy,
