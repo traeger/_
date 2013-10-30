@@ -54,8 +54,8 @@ class ExtensionTest(Extension):
     for cy in xrange(-3,3+1):
       for cx in xrange(-3,3+1):
         self.exBase.send_chunk(
-          cx + self.exBase.pc[0],
-          cy + self.exBase.pc[1]
+          cx + self.exBase.player.pc[0],
+          cy + self.exBase.player.pc[1]
         )
         
 manager = ExtensionManager()

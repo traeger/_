@@ -25,10 +25,14 @@ THE SOFTWARE.
 import string
 import numpy
 
-from _.extension import Extension
-from _.world.chunkgenerator_world import Chunkgenerator
-import _.player.player as player
 from _.constants import *
+
+#extensions imports
+from _.extension import Extension
+import player
+
+#additional imports
+from _.world.chunkgenerator_world import Chunkgenerator
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,14 +44,11 @@ class ExtensionBase(Extension):
   def on_setup(self):
     self.chuckGenerator = Chunkgenerator(367598)
     self.TMP_chunk = numpy.zeros((CHUNK_DIMS, CHUNK_SIZE, CHUNK_SIZE), dtype='|S1')
-    self.p = player.randomizeStartLocation()
+    self.player = player.Player()
+    self.player.randomizeStartLocation()
     
     # register message handler
     self.addMessageHandler('move_delta', self.handle_move_delta)
-    
-  @property
-  def pc(self):
-    return (self.p[0] // CHUNK_SIZE, self.p[1] // CHUNK_SIZE)
     
   def send_chunk(self, cx, cy):
     self.chuckGenerator.chunk(cx, cy, self.TMP_chunk)
@@ -64,8 +65,8 @@ class ExtensionBase(Extension):
     
   def send_move_position(self):
     data = {
-      'x': self.p[0],
-      'y': self.p[1]
+      'x': self.player.p[0],
+      'y': self.player.p[1]
     }
     self.send('move_position', data)
     
@@ -81,15 +82,15 @@ class ExtensionBase(Extension):
       logger.warn(str(direction))
       return
     
-    cx = self.p[0] // CHUNK_SIZE
-    cy = self.p[1] // CHUNK_SIZE
-    mx = self.p[0] - cx * CHUNK_SIZE
-    my = self.p[1] - cy * CHUNK_SIZE
+    cx = self.player.p[0] // CHUNK_SIZE
+    cy = self.player.p[1] // CHUNK_SIZE
+    mx = self.player.p[0] - cx * CHUNK_SIZE
+    my = self.player.p[1] - cy * CHUNK_SIZE
     minth = 0
     maxth = CHUNK_SIZE - 1
     
     # change position and send it
-    self.p = (self.p[0] + dx, self.p[1] + dy)
+    self.player.p = (self.player.p[0] + dx, self.player.p[1] + dy)
     self.send_move_position()
     
     # send chunks if in range

@@ -22,9 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+from _.constants import *
+
 LOCS = [
   (100 * 1000 * 157, 100 * 1000 * 253)
 ]
 
-def randomizeStartLocation():
-  return LOCS[0]
+class Player():
+  def __init__(self):
+    pass
+  
+  def randomizeStartLocation(self):
+    self.p = LOCS[0]
+
+  @property
+  def pc(self):
+    return (self.p[0] // CHUNK_SIZE, self.p[1] // CHUNK_SIZE)
