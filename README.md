@@ -41,7 +41,15 @@ install
 world generation
 ----------------
 
-the world generation can be tested with
+### ingame view
+
+A screenshot of the ingame view in the javascript client _.js
+
+![alt text](https://raw.github.com/traeger/_/master/images/worldgen_example_02.png "(imageview)")
+
+### biome generation
+
+The world generation can be tested with
 ```
 cd server/test/world
 python test_worldgen.py
