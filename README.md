@@ -36,7 +36,7 @@ install
 
 *   open the `index.html` in any browser to start the client
 
-*   have fun!
+*   move with `W A S D`, have fun!
 
 world generation
 ----------------
