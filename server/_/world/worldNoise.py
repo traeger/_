@@ -25,15 +25,24 @@ THE SOFTWARE.
 from random import Random
 from noise import snoise2
 
+PERLIN_VARIANCE = 1.0/(4/2)**0.5
+
 """
 generate a world-scale noise using
 simplex-noise a fast(but approx.) method of perlin-noise
+
+since the values of the perlin noise are most of the time distributed
+in the interval [-1/sqrt(4/n), +1/sqrt(4/n)] (for a n-dim noise),
+this values are used to scale the noise variance.
 """
 class WorldNoise:
-  def __init__(self, seed, octaves = 50):
+  def __init__(self, seed, octaves = 50, mean = 0.0, variance = 1.0):
     self.frequency = 10.0 * 1000.0 * 1000.0 # frequency for a 1 pixel = 1m solution
     self.octaves = octaves
     self.seed = seed
+    
+    self.mean = mean
+    self.variance = variance
     
     rnd = Random(self.seed)
     self.xseed = rnd.random() * self.frequency * self.octaves
@@ -63,7 +72,7 @@ class WorldNoise:
       (self.xseed + (x)*zoom) / self.frequency,
       (self.yseed + (y)*zoom) / self.frequency,
       self.octaves
-    )
+    ) * (self.variance / PERLIN_VARIANCE) + self.mean
         
   """
   just for tests, discreatize the area via fixed threshholds
