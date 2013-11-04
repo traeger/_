@@ -31,5 +31,11 @@ nosetests.xml
 *.mo
 
 # windows tests
-Command Prompt.Ink
+Command Prompt.lnk
 desktop.ini
+
+# blender
+*.blend1
+*.blend2
+*.blend3
+out_terrain/

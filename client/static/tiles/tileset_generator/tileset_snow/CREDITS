@@ -1,0 +1,25 @@
+Thanks a lot at Clint Bellanger for creating the amazing grass-tileset
+http://opengameart.org/content/grassland-tileset .
+
+This tileset here is only a slightly changed version from the original
+grassland_shapes.blend, I added height-transitions and alpha-transitions.
+Also the texture-uv-mapping is changed.
+
+author: Marco Träger (CC-BY-SA 3.0)
+original author: Clint Bellanger (CC-BY-SA 3.0)
+See referenced textures for individual licenses
+
+TEXTURES
+
+grass_overcast.png
+Artist: bart, Crack.com (CC0 1.0)
+http://opengameart.org/node/7408
+
+rock_diffuse.png, rock_normal.png
+Artist: Anonymous, Dim (CC-BY 3.0)
+http://opengameart.org/node/8141
+http://opengameart.org/node/8166
+
+water.png
+Artist: Public Domain Textures (Public Domain)
+http://pdtextures.blogspot.com/

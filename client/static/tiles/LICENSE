@@ -1,4 +1,4 @@
-﻿/*********/
+/*********/
 The following tilesets are published on http://opengameart.org/
 and all honor goes the the authors/original authors.
 Thanks a lot for providing them!
@@ -17,6 +17,13 @@ tileset_cave_1.png
   author: Clint Bellanger
   url: http://opengameart.org/content/cave-tileset
   license: http://creativecommons.org/licenses/by/3.0/
+
+tileset_terrain_grass.png
+tileset_terrain_snow.png
+  author: Marco Träger (CC-BY-SA 3.0)
+  original author: Clint Bellanger (CC-BY-SA 3.0)
+  see: tileset_generator/CREDITS
+  license: http://creativecommons.org/licenses/by-sa/3.0/
 
 /*********/
 The .js files to setup a tileset, namely
