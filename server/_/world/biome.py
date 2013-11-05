@@ -25,6 +25,12 @@ THE SOFTWARE.
 import numpy
 from scipy.spatial import cKDTree
 
+HEIGHT_VARIANCE = 4000.0
+
+"""
+http://de.wikipedia.org/wiki/Gebirgsland
+"""
+
 class Biome:
   IDX_HEIGHT = 0
   IDX_MOISTURE = 1
@@ -46,7 +52,7 @@ class Biome:
     
     # triangulate via height and moisture
     points = map(
-      lambda t: (t[Biome.IDX_HEIGHT], t[Biome.IDX_MOISTURE]),
+      lambda t: (t[Biome.IDX_HEIGHT]/HEIGHT_VARIANCE, t[Biome.IDX_MOISTURE]),
       self.biomes
     )
     points = numpy.array(points)
@@ -57,11 +63,11 @@ class Biome:
     print "tri ready"
     
   def __getitem__(self, p):
-    if p[0] > 0.7:
+    if p[0] > 6000:
       return self.fromName["Snow"]
     
     if not self.triangulated: self.triangulate()
-    nearest = self.kdtree.query(p, k=1, p=2)
+    nearest = self.kdtree.query((p[0]/HEIGHT_VARIANCE, p[1]), k=1, p=2)
     return nearest[1]
   
   def toColor(self, idx):
@@ -73,23 +79,23 @@ class Biome:
     b = Biome()
     
     #
-    b.addBiome(0.0,  0.6, "Tropical Rainforest", [0.0,1.0,0.0])
-    b.addBiome(0.0,  0.4, "Tropical Seasonal Forest", [0.5,1.0,0.0])
-    b.addBiome(0.0, -0.7, "Subtropical Desert", [0.9,0.8,0.0])
+    b.addBiome(100,  0.9, "Tropical Rainforest", [0.0,1.0,0.0])
+    b.addBiome(100,  0.4, "Tropical Seasonal Forest", [0.5,1.0,0.0])
+    b.addBiome(100, -1.0, "Subtropical Desert", [0.9,0.8,0.0])
     #
-    b.addBiome(0.1,  0.0, "Grassland", [0.4,0.8,0.0])
+    b.addBiome(200,  0.0, "Grassland", [0.4,0.8,0.0])
     #
-    b.addBiome(0.2,  0.6, "Temperate Rain Forest", [0.5,0.9,0.0])
-    b.addBiome(0.2,  0.5, "Temperate Deciduouse Forest", [0.5,0.7,0.0])
-    b.addBiome(0.2, -0.7, "Temperate Desert", [0.8,0.8,0.0])
+    b.addBiome(300,  0.8, "Temperate Rain Forest", [0.5,0.9,0.0])
+    b.addBiome(300,  0.7, "Temperate Deciduouse Forest", [0.5,0.7,0.0])
+    b.addBiome(200, -1.0, "Temperate Desert", [0.8,0.8,0.0])
     #
-    b.addBiome(0.4,  0.6, "Taiga", [0.3,0.3,0.1])
-    b.addBiome(0.4,  0.3, "Schrubland", [0.4,0.4,0.2])
+    b.addBiome(800,  0.9, "Taiga", [0.3,0.3,0.1])
+    b.addBiome(800,  0.5, "Schrubland", [0.4,0.4,0.2])
     #
-    b.addBiome(0.7,  0.5, "Snow", [1.0,1.0,1.0])
-    b.addBiome(0.6,  0.1, "Tundra", [0.2,0.2,0.0])
-    b.addBiome(0.6, -0.2, "Barerock", [0.5,0.5,0.5])
-    b.addBiome(0.6, -0.7, "Scorched", [0.3,0.3,0.3])
+    b.addBiome(6000,  0.8, "Snow", [1.0,1.0,1.0])
+    b.addBiome(2000,  0.2, "Tundra", [0.2,0.2,0.0])
+    b.addBiome(2000, -0.3, "Barerock", [0.5,0.5,0.5])
+    b.addBiome(2000, -1.0, "Scorched", [0.3,0.3,0.3])
     
     b.triangulate()
     return b

@@ -32,20 +32,22 @@ this values are used to scale the noise variance.
 
 http://www.gamedev.net/topic/293492-perlin-noise-distribution/
 """
-PERLIN_VARIANCE = 1.0/(4/2)**0.5
+PERLIN_V50 = 0.2
+PERLIN_V100 = 1.0/(4/2)**0.5
 
 """
 generate a world-scale noise using
 simplex-noise a fast(but approx.) method of perlin-noise
 """
 class WorldNoise:
-  def __init__(self, seed, octaves = 50, mean = 0.0, variance = PERLIN_VARIANCE):
+  def __init__(self, seed, octaves = 50, mean = 0.0, v50 = PERLIN_V50, v100 = PERLIN_V100):
     self.frequency = 10.0 * 1000.0 * 1000.0 # frequency for a 1 pixel = 1m solution
     self.octaves = octaves
     self.seed = seed
     
     self.mean = mean
-    self.variance = variance
+    self.v50  = v50
+    self.v100 = v100
     
     rnd = Random(self.seed)
     self.xseed = rnd.random() * self.frequency * self.octaves
@@ -71,11 +73,14 @@ class WorldNoise:
         
   def __getitem__(self, idx):
     x, y, zoom = idx
-    return snoise2(
+    v = snoise2(
       (self.xseed + (x)*zoom) / self.frequency,
       (self.yseed + (y)*zoom) / self.frequency,
       self.octaves
-    ) * (self.variance / PERLIN_VARIANCE) + self.mean
+    )
+    
+    a = (self.v50 - PERLIN_V50 * self.v100) / (PERLIN_V50**2 - PERLIN_V50)    
+    return (a) * v**2 + (self.v100 - a) * v
         
   """
   just for tests, discreatize the area via fixed threshholds

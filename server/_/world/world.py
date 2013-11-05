@@ -28,8 +28,8 @@ from biome import Biome
 class World:
     
   def __init__(self, seed):
-    self.heightGen = WorldNoise(seed)
-    self.moistureGen  = WorldNoise(2**seed)
+    self.heightGen = WorldNoise(seed, mean=0, v50 = 200, v100=8000)
+    self.moistureGen  = WorldNoise(2**seed, mean=0, v100=1.0)
     self.biome = Biome.default()
   
   def genHeightMap(self, xo, yo, zoom, area):

@@ -34,10 +34,10 @@ from scipy.misc import toimage
 # bioms
 ###
 b = Biome.default()
-area = numpy.zeros((200,200,3), dtype=numpy.float)
+area = numpy.zeros((600,200,3), dtype=numpy.float)
 for y in xrange(0, area.shape[1]):
   for x in xrange(0, area.shape[0]):
-    area[x,y,:] = b.toColor(b[x/200.0,y/100.0-1.0])
+    area[x,y,:] = b.toColor(b[x*(8000/600.0),y/100.0-1.0])
     
 toimage(area.transpose()).show()
 
