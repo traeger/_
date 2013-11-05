@@ -22,20 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from _.constants import *
+import os, sys
+sys.path.append(os.path.join('..','..'))
 
-from _.world.chunkgenerator_world import Chunkgenerator
-from _.world.chunk import Chunk
+import numpy
+from random import Random
 
-import logging
-logger = logging.getLogger(__name__)
+from scipy.misc import toimage
+from _.world.world import World
 
-class Chunkprovider:
-  def __init__(self, seed):
-    self.chuckGenerator = Chunkgenerator(367598)
+useColor = True
 
-  def generateTempChunk(self):
-    return Chunk()
+meterperpixel = 100 * 1000 # 1km
+zoom = 2
+scale = 1 * (meterperpixel / zoom)
 
-  def chunk(self, cx, cy, chunk):
-    self.chuckGenerator.chunk(cx, cy, chunk)
+w = World(367598)
+
+area = numpy.zeros((200,200), dtype=numpy.float)
+xs = area.shape[0]
+ys = area.shape[1]
+
+w.genHeightMap(100 * 1000 * 157, 100 * 1000 * 253, 1, area[:])
+print area

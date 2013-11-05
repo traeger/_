@@ -73,10 +73,8 @@ class Chunkgenerator(object):
                 v = self.tmpchunk[x,y]
                 if v <= 0:
                     w = 'W'
-                elif v <= 0.4:
-                    w = 'G'
                 else:
-                    w = 'S'
+                	w = 'G'
                 self.ca_tmpchunks[0][x,y] = w
     
         # let a cellular automata run <code>self.ca_iterations</code> times
@@ -87,9 +85,9 @@ class Chunkgenerator(object):
         
         # move the center tmp-chunk to the output
         # terrain
-        chunk[CHUNK_DIM_TERRAIN,:,:] = c_terrain[CHUNK_SIZE:2*CHUNK_SIZE, CHUNK_SIZE:2*CHUNK_SIZE]
+        chunk[CHUNK_DIM_TERRAIN] = c_terrain[CHUNK_SIZE:2*CHUNK_SIZE, CHUNK_SIZE:2*CHUNK_SIZE]
         # height
-        chunk[CHUNK_DIM_HEIGHT,:,:]  = c_height [CHUNK_SIZE:2*CHUNK_SIZE, CHUNK_SIZE:2*CHUNK_SIZE]
+        chunk[CHUNK_DIM_HEIGHT]  = c_height [CHUNK_SIZE:2*CHUNK_SIZE, CHUNK_SIZE:2*CHUNK_SIZE]
         # objects
         rnd = Random(self.chunkSeed(cx,cy))
         for y in xrange(0, CHUNK_SIZE):
@@ -99,5 +97,5 @@ class Chunkgenerator(object):
                     w = 'T'
                 else:
                     w = '_'
-                chunk[CHUNK_DIM_OBJECTS,x,y] = w
+                chunk[CHUNK_DIM_OBJECTS][x,y] = w
         

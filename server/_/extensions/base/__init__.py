@@ -54,11 +54,7 @@ class ExtensionBase(Extension):
     data = {
       'cx': cx,
       'cy': cy,
-      'chunkdata': {
-        'terrain': self.TMP_chunk[CHUNK_DIM_TERRAIN].ravel(order='C').tostring(),
-        'height' : self.TMP_chunk[CHUNK_DIM_HEIGHT] .ravel(order='C').tostring(),
-        'objects': self.TMP_chunk[CHUNK_DIM_OBJECTS].ravel(order='C').tostring(),
-      }
+      'chunkdata': self.TMP_chunk.asDict()
     }
     self.send('chunk', data)
     

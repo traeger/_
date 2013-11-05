@@ -27,3 +27,22 @@ CHUNK_DIMS = 3
 CHUNK_DIM_TERRAIN = 0
 CHUNK_DIM_HEIGHT  = 1
 CHUNK_DIM_OBJECTS = 2
+
+"""
+world height generation.
+
+half of the generated positiv heights are be between
+0 and 'WORLD_HEIGHT_HALF' and the other half between
+'WORLD_HEIGHT_HALF' and 'WORLD_HEIGHT_MAX'.
+
+In the implementation via simplex-noise a quadratic 
+interpolation is used.
+"""
+WORLD_HEIGHT_HALF = 300
+WORLD_HEIGHT_MAX = 8000
+
+REGION_HEIGHT_HALF = 5
+REGION_HEIGHT_MAX  = 40
+
+LOCAL_HEIGHT_HALF = 3
+LOCAL_HEIGHT_MAX  = 10

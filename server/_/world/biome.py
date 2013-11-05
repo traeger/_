@@ -25,7 +25,9 @@ THE SOFTWARE.
 import numpy
 from scipy.spatial import cKDTree
 
-HEIGHT_VARIANCE = 4000.0
+from _.constants import *
+
+HEIGHT_VARIANCE = WORLD_HEIGHT_MAX / 4.0
 
 """
 http://de.wikipedia.org/wiki/Gebirgsland

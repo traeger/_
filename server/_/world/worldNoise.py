@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 from random import Random
 from noise import snoise2
+import math
 
 """
 since the values of the perlin noise are most of the time distributed
@@ -32,22 +33,42 @@ this values are used to scale the noise variance.
 
 http://www.gamedev.net/topic/293492-perlin-noise-distribution/
 """
-PERLIN_V50 = 0.2
 PERLIN_V100 = 1.0/(4/2)**0.5
+PERLIN_V50 = 0.3 / PERLIN_V100
 
 """
 generate a world-scale noise using
 simplex-noise a fast(but approx.) method of perlin-noise
 """
+
+def worldscale(seed, mean = 0.0, v50 = 0.3, v100 = 1.0):
+  return WorldNoise(seed, 
+    frequency = 10.0 * 1000.0 * 1000.0, # frequency for a 1 pixel = 1m solution 
+    mean = mean, v50 = v50, v100 = v100)
+
+def regionscale(seed, mean = 0.0, v50 = 0.3, v100 = 1.0):
+  return WorldNoise(seed, 
+    frequency = 1000.0 * 10.0,
+    mean = mean, v50 = v50, v100 = v100)
+    
+def localscale(seed, mean = 0.0, v50 = 0.3, v100 = 1.0):
+  return WorldNoise(seed, 
+    frequency = 100.0,
+    mean = mean, v50 = v50, v100 = v100)
+
 class WorldNoise:
-  def __init__(self, seed, octaves = 50, mean = 0.0, v50 = PERLIN_V50, v100 = PERLIN_V100):
-    self.frequency = 10.0 * 1000.0 * 1000.0 # frequency for a 1 pixel = 1m solution
+  def __init__(self, seed, frequency = 1, octaves = 50, mean = 0.0, v50 = 0.3, v100 = 1.0):
+    self.frequency = frequency
     self.octaves = octaves
     self.seed = seed
     
     self.mean = mean
     self.v50  = v50
     self.v100 = v100
+    
+    # quadratic interpolation
+    self.a1 = (self.v50 - PERLIN_V50 * self.v100) / (PERLIN_V50**2 - PERLIN_V50)
+    self.a2 = (self.v100 - self.a1)
     
     rnd = Random(self.seed)
     self.xseed = rnd.random() * self.frequency * self.octaves
@@ -59,12 +80,18 @@ class WorldNoise:
   oy - yoffset in the zoom factor
   area - 2d numpy array to write the map to
   """
-  def generate(self, xo, yo, zoom, area):
+  def generate(self, xo, yo, zoom, area, add=False):
     xs = area.shape[0]
     ys = area.shape[1]
     for y in xrange(0,ys):
       for x in xrange(0,xs):
-        area[x,y] = self[xo+x,yo+y,zoom]
+        v = self[xo+x,yo+y,zoom]
+        if(add):
+          area[x,y] += v
+        else:
+          area[x,y] = v
+    return area
+        
         #area[x,y] = snoise2(
         #  (self.xseed + (xo+x)*scale) / self.frequency,
         #  (self.yseed + (yo+y)*scale) / self.frequency,
@@ -78,9 +105,9 @@ class WorldNoise:
       (self.yseed + (y)*zoom) / self.frequency,
       self.octaves
     )
-    
-    a = (self.v50 - PERLIN_V50 * self.v100) / (PERLIN_V50**2 - PERLIN_V50)    
-    return (a) * v**2 + (self.v100 - a) * v
+    vabs = math.fabs(v / PERLIN_V100)
+    wabs = self.a1 * vabs*vabs + self.a2 * vabs
+    return math.copysign(wabs, v)
         
   """
   just for tests, discreatize the area via fixed threshholds

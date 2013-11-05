@@ -22,18 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from worldNoise import WorldNoise
+import worldNoise
 from biome import Biome
+
+from _.constants import *
 
 class World:
     
   def __init__(self, seed):
-    self.heightGen = WorldNoise(seed, mean=0, v50 = 200, v100=8000)
-    self.moistureGen  = WorldNoise(2**seed, mean=0, v100=1.0)
+    self.heightGen = worldNoise.worldscale(seed, mean=0, v50 = WORLD_HEIGHT_HALF, v100=WORLD_HEIGHT_MAX)
+    self.regionHeightGen = worldNoise.regionscale(seed, mean=0, v50 = REGION_HEIGHT_HALF, v100=REGION_HEIGHT_MAX)
+    self.localHeightGen = worldNoise.localscale(seed, mean=0, v50 = LOCAL_HEIGHT_HALF, v100=LOCAL_HEIGHT_MAX)
+    self.moistureGen  = worldNoise.worldscale(2**seed)
     self.biome = Biome.default()
   
   def genHeightMap(self, xo, yo, zoom, area):
-    return self.heightGen.generate(xo, yo, zoom, area)
+    self.heightGen.generate(xo, yo, zoom, area)
+    self.regionHeightGen.generate(xo, yo, zoom, area, add=True)
+    self.localHeightGen.generate(xo, yo, zoom, area, add=True)
+    return area
   
   def genMoistureMap(self, xo, yo, zoom, area):
     return self.moistureGen.generate(xo*3, yo*3, zoom/3, area)
