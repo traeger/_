@@ -31,6 +31,7 @@ _ = new function() { var _ = this;
         data : {
             terrain: Array(CHUNK_SIZE*CHUNK_SIZE+1).join('_'), // see: http://stackoverflow.com/questions/1877475/repeat-character-n-times
             objects: Array(CHUNK_SIZE*CHUNK_SIZE+1).join('_'),
+            height : Array(CHUNK_SIZE*CHUNK_SIZE+1).join(0),
         },
         view : function(name) {
             return new ChunkView(this.data[name])
@@ -42,7 +43,7 @@ _ = new function() { var _ = this;
      */
     var logger = new function() {};
     logger.error = function(msg) {console.error(msg)}
-    logger.info = function(msg) {return; console.log(msg)}
+    logger.info = function(msg) {console.log(msg)}
 
     _.start = function() {
         _.connect()
@@ -195,9 +196,33 @@ _ = new function() { var _ = this;
         _.msgHandler[msgtype] = handler
     }
     
+    /* convert height-map from delta "local values" to actual "global values" */
+    var heightmap_l2g = function(height, height_deltas) {
+        h = parseInt(height)
+        hs = height_deltas
+        hsn = []
+        for (var i = 0; i < hs.length; ++i) {
+            if(hs[i] == '0') {
+                hsn.push(h)
+            }
+            else {
+                v = hs.charCodeAt(i)
+                w = v >= 97 ? (h - (v - 97 + 1)) : (h + (v - 65 + 1))
+                hsn.push(w)
+            }
+        }
+        return hsn
+    }
     _.addMessageHandler('chunk', function(msg) {
         var cx = parseInt(msg.cx)
         var cy = parseInt(msg.cy)
+        /* convert height-map from delta values to actual values */
+        {
+            var hsn = heightmap_l2g(msg.chunkdata.height, msg.chunkdata.heights);
+        	delete msg.chunkdata.heights
+        	delete msg.chunkdata.height
+        	msg.chunkdata.height = hsn
+        }
         logger.info(msg.chunkdata);
         _.chunk(cx, cy, msg.chunkdata);
         for (var key in _.graphics) {

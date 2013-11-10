@@ -23,6 +23,9 @@ class Chunk:
     self[idx][:,:] = value
     
   def calcHeightDiffs(self):
+    """
+    convert height-map from actual "global values" to delta "local values"
+    """
     heights = self[CHUNK_DIM_HEIGHT]
     height = self[CHUNK_DIM_HEIGHT][0,0]
     for y in xrange(0, CHUNK_SIZE):
@@ -31,9 +34,9 @@ class Chunk:
         if   v == 0:
           w = '0'
         elif v < 0:
-          w = chr(97 - v)
+          w = chr(97 - v - 1)
         else:
-          w = chr(65 + v)
+          w = chr(65 + v - 1)
         self.TMP_heightsdiff[x,y] = w
     return self.TMP_heightsdiff
     

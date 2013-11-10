@@ -116,7 +116,11 @@ _vis = new function() { var _vis = this;
      *    c5    c6    
      *       c7      
      */
-    _vis.terrainTileMapper = function(cc, c0, c1, c2, c3, c4, c5, c6, c7) {
+    _vis.terrainTileMapper = function(
+      cc, // center ground
+      c0, c1, c2, c3, c4, c5, c6, c7, // neighbor ground
+      h0, h1, h2, h3, h4, h5, h6, h7  // neighbor height
+    ) {
         var d;
         switch (cc) {
             case '_': d=[{setname: 'cave', tilename: 'bones', variation:[0], z: 0}]; break;

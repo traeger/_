@@ -254,6 +254,8 @@ _graphicsDOMX = new function() { var _graphics = this;
     
     /* prepare terrain rendering */
     var terrain = _.chunkBordered(cx, cy).view('terrain')
+    /* prepare height rendering */
+    var height  = _.chunkBordered(cx, cy).view('height')
     /* prepate object rendering */
     var objects = _.chunk        (cx, cy).view('objects')
     
@@ -280,13 +282,19 @@ _graphicsDOMX = new function() { var _graphics = this;
            *    c5    c6           +0.+1       +1.+0            
            *       c7                    +1.+1               
            */ 
+          var h = height.get(i, j);
           var tile = _graphics.terrainTileMapper(
             terrain.get(i    , j  ), // cc
             terrain.get(i-1  , j-1), // c0
             terrain.get(i-1  , j+0), terrain.get(i+0  , j-1), // c1, c2
             terrain.get(i-1  , j+1), terrain.get(i+1  , j-1), // c3, c4
             terrain.get(i+0  , j+1), terrain.get(i+1  , j+0), // c5, c6
-            terrain.get(i+1  , j+1)  // c7
+            terrain.get(i+1  , j+1), // c7
+            h - height.get(i-1  , j-1), // h0
+            h - height.get(i-1  , j+0), h - height.get(i+0  , j-1), // h1, h2
+            h - height.get(i-1  , j+1), h - height.get(i+1  , j-1), // h3, h4
+            h - height.get(i+0  , j+1), h - height.get(i+1  , j+0), // h5, h6
+            h - height.get(i+1  , j+1) // h7
           )
           if(tile) {
             var tileElem = _graphics.createTile(tile, ax, ay, randomValue)
