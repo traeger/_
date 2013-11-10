@@ -71,13 +71,50 @@ _vis = new function() { var _vis = this;
         return [23];
     }
     
+    _vis.tileVariationForWall_Format_ = function(cc, c0, c1, c2, c3, c4, c5, c6, c7, swap) {
+        if (swap) {
+            return _vis.tileVariationForWall_Format_(true, c0!=cc, c1!=cc, c2!=cc, c3!=cc, c4!=cc, c5!=cc, c6!=cc, c7!=cc);
+        }
+        
+        // horizontal
+        if(is(cc, [c5,c6,c3,c4,c0], [c7])) return [4];
+        if(is(cc, [c1,c2,c3,c4,c7], [c0])) return [6];
+        if(is(cc, [c1,c2], [c5,c6])) return [8];
+        if(is(cc, [c5,c6], [c1,c2])) return [10];
+        
+        // vertical
+        if(is(cc, [c2,c6], [c1,c5])) return [9];
+        if(is(cc, [c1,c5], [c2,c6])) return [11];
+        
+        // corner inner
+        if(is(cc, [c1,c5,c0,c7], [c3])) return [5];
+        if(is(cc, [c2,c6,c0,c7], [c4])) return [7];
+        
+        // corner outer
+        if(is(cc, [c2,c6,c4], [c0,c5])) return [9];
+        if(is(cc, [c2,c6,c4], [c0,c7])) return [9];
+        if(is(cc, [c1,c5,c3], [c0,c6])) return [11];
+        if(is(cc, [c1,c5,c3], [c0,c7])) return [11];
+        
+        // diagonal
+        if(is(cc, [c5,c2], [c6])) return [0];
+        if(is(cc, [c5,c2], [c4,c7])) return [0];
+        if(is(cc, [c1,c6], [c5])) return [1];
+        if(is(cc, [c1,c6], [c3,c7])) return [1];
+        if(is(cc, [c5,c2], [c1])) return [2];
+        if(is(cc, [c5,c2], [c3,c0])) return [2];
+        if(is(cc, [c1,c6], [c2])) return [3];
+        if(is(cc, [c1,c6], [c0,c4])) return [3];
+        
+        return [23];
+    }
+    
     /*
-     *                             -- even                          -- odd
-     *       c0                    +0.-2                            +0.-2  
-     *    c1    c2           -1.-1       +0.-1                +0.-1       +1.-1   
-     * c3    cc    c4  -1.+0       +0.+0       +1.+0    -1.+0       +0.+0       +1.+0
-     *    c5    c6           -1.+1       +0.+1                +0.+1       +1.+1  
-     *       c7                    +0.+2                            +0.+2 
+     *       c0         
+     *    c1    c2      
+     * c3    cc    c4 
+     *    c5    c6    
+     *       c7      
      */
     _vis.terrainTileMapper = function(cc, c0, c1, c2, c3, c4, c5, c6, c7) {
         var d;
@@ -86,9 +123,10 @@ _vis = new function() { var _vis = this;
             case 'G': {
                 // water on a nightbour
                 if (!is('W', false, [c0, c1, c2, c3, c4, c5, c6, c7])) {
-                      d=[{setname: 'grassland', tilename: 'watercliff', variation:_vis.tileVariationForWall('W', c0, c1, c2, c3, c4, c5, c6, c7, true), z: 0}];
+                      d=[{setname: 'terrain_grass', tilename: 'water', variation:'all', z: -1},
+                         {setname: 'terrain_grass', tilename: 'cliff1', variation:_vis.tileVariationForWall_Format_('W', c0, c1, c2, c3, c4, c5, c6, c7, true), z: -1}];
                 } else {
-                      d=[{setname: 'grassland', tilename: 'grass', variation:'all', z: 0}];
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0}];
                 }
                 break;
             }
@@ -96,19 +134,19 @@ _vis = new function() { var _vis = this;
             case 'B': d=[{setname: 'cave', tilename: 'bones', variation:'all', z: 0}]; break;
             case 'S': {
                 if (is(cc, [c0, c1, c2, c3, c4, c5, c6, c7])) {
-                      d=[{setname: 'grassland', tilename: 'grass', variation:'all', z: 2}]; break;
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 2}]; break;
                 }
                 if (is(cc, [c0,c1,c2]) || is(cc, [c2,c4,c6]) || is(cc, [c5,c6,c7]) || is(cc, [c1,c3,c5])) {
-                      d=[{setname: 'grassland', tilename: 'grass', variation:'all', z: 0},
-                         {setname: 'grassland', tilename: 'cliff', variation:_vis.tileVariationForWall(cc, c0, c1, c2, c3, c4, c5, c6, c7), z: 0}];
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
+                         {setname: 'terrain_grass', tilename: 'cliff2', variation:_vis.tileVariationForWall_Format_(cc, c0, c1, c2, c3, c4, c5, c6, c7), z: 0}];
                 } else {
-                      d=[{setname: 'grassland', tilename: 'grass', variation:'all', z: 0},
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
                          {setname: 'grassland', tilename: 'rock', variation:'all', z: 0}];
                 }
                 break;
             }
             case 'W': {
-                      d=[{setname: 'grassland', tilename: 'water', variation:'all', z: -1}]; break;
+                      d=[{setname: 'terrain_grass', tilename: 'water', variation:'all', z: -1}]; break;
             }
         }
         return d;

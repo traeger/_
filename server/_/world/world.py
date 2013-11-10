@@ -40,7 +40,6 @@ class World:
     self.heightGen.generate(xo, yo, zoom, area)
     self.regionHeightGen.generate(xo, yo, zoom, area, add=True)
     self.localHeightGen.generate(xo, yo, zoom, area, add=True)
-    return area
   
   def genMoistureMap(self, xo, yo, zoom, area):
     return self.moistureGen.generate(xo*3, yo*3, zoom/3, area)

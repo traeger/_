@@ -330,7 +330,7 @@ _import = new function() { _import = this;
             tile.xs = oldtile.xs;
             tile.ys = oldtile.ys;
             tile.origin = oldtile.origin ? oldtile.origin : 0;
-            tile.url = params.url;
+            tile.url = tileset.url;
             for (var variation in oldtile.variant) {
                 tile.push({
                     x: oldtile.variant[variation].x * params.xs,

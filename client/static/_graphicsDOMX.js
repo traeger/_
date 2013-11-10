@@ -124,7 +124,6 @@ _graphicsDOMX = new function() { var _graphics = this;
     return multitile;
   }
   var createTilePart = function(tiledata, i, j, randomValue) {
-    var tileset = _.tileset(tiledata.setname);
     var tile = _.tile(tiledata.setname, tiledata.tilename);
     var variation
     if (!tiledata.variation) {
@@ -151,7 +150,7 @@ _graphicsDOMX = new function() { var _graphics = this;
       'margin-top': (TILE_YS * margintop) + 'px',
       'margin-left': (TILE_XS * marginleft) + 'px',
       //'background-color': colors[Math.round(Math.random(colors.length))], 
-      'background-image': 'url("' + tileset.url + '")',
+      'background-image': 'url("' + tile.url + '")',
       'background-position': '-'+ox+'px -'+oy+'px',
       //'background-repeat': 'no-repeat',
       //'background-position': 'center center'
