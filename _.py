@@ -29,6 +29,7 @@ import os, sys
 
 import random
 import string
+import thread
 
 import numpy
 from server._ import dispatcher, extension
@@ -44,10 +45,7 @@ logging.basicConfig(level=logging.DEBUG)
 class ExtensionTest(Extension):
   def on_setup(self):
     logger.info('on_setup')
-    self.exBase = self.extensions['base']
-    
-  def on_connect(self):
-    logger.info('on_connect')
+    self.exBase = self.get_extension('base')
     self.send_initial()
     
   def send_initial(self):
@@ -62,7 +60,7 @@ class ExtensionTest(Extension):
 manager = extension.get_extension_manager()
 manager.addExtension('base', ExtensionBase)
 manager.addExtension('test', ExtensionTest)
-manager.bindServer(10000)
+thread.start_new_thread(ServerSocket.start(10000))
 
 #main game loop:
 while True:
