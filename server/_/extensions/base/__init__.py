@@ -47,7 +47,9 @@ class ExtensionBase(Extension):
     self.player.randomizeStartLocation()
     
     # register message handler
-    self.addMessageHandler('move_delta', self.handle_move_delta)
+    self.add_client_listener('move_position')
+    self.add_client_listener('chunk')
+    self.add_listener(self.handle_move_delta, 'move_delta')
     
   def send_chunk(self, cx, cy):
     self.chuckprovider.chunk(cx, cy, self.TMP_chunk)
@@ -69,7 +71,7 @@ class ExtensionBase(Extension):
     }
     self.send('move_position', data)
     
-  def handle_move_delta(self, direction):
+  def handle_move_delta(self, type, direction):
     dx = direction['x']
     dy = direction['y']
   

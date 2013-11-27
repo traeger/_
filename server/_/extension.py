@@ -22,60 +22,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from net import ServerSocket
-
-import thread
-import logging
-logger = logging.getLogger(__name__)
-
-
-class ExtensionManager():
-
-  def __init__(self):
-    self.extensions = {}
-  
-  def bindServer(self, port):
-    thread.start_new_thread(ServerSocket.start(port))
-
-  def addExtension(self, name, extension_name):
-    self.extensions[name] = extension_name
+class ExtensionManager:
+  def create_extension(self, user, id, remoteListener):
+    es = {}
+    for name, ext in __extensions:
+      e = ext(user,id,remoteListener) # merken zum loeschen
+      es[name] = e
+    for e in es:
+      e.__extensions = es
+    for e in es:
+      e.on_setup()
+    
+  def add_extension(self, name, extension_name):
+    self.__extensions[name] = extension_name
 
 class Extension:
-  def __init__(self, server, dispatcher):
-    self.server = server
-    self.dispatcher = dispatcher
+  def __init__(self, user,id,remoteListener):
+    self.__user = user
+    self.__id = id
+    self.__d = dispatcher.get_dispatcher()
+    self.__remoteListener = remoteListener  
+
+  def get_extension(self, name):
+    self.__extensions[name]
     
+  def add_client_listener(self, type):
+    self.__remoteListener.register(type)
+  
+  def add_listener(self, listener, type):
+    self.__d.add_listener(listener, type, self.__id)
+    
+  def add_listener_global(self, listener, type):
+    self.__d.add_listener(listener, type)
+    
+  def send(self, type, data):
+    self.__d.queue(type, data, [self.__id])
+
   def on_setup(self):
     #fallback, if not defined by the implementing class
     logger.debug('on_setup not defined')
     pass
-  
-  def on_connect(self):
+
+  def on_destroy(self):
     #fallback, if not defined by the implementing class
-    logger.debug('on_connect not defined')
-    pass
-  
-  def on_message(self, msgtype, msgdata):
-    #fallback, if not defined by the implementing class
-    logger.debug('on_message not defined, message: ' + str(msgtype) + ':' + str(msgdata))
+    logger.debug('on_destroy not defined')
     pass
     
-  def addMessageHandler(self, msgtype, message_handler):
-    self.dispatcher.addMessageHandler(msgtype, message_handler)
-    
-  def sleep(self, time):
-    self.server.sleep(time)
-    
-  def send(self, msgtype, msgdata):
-    self.dispatcher.send(msgtype, msgdata)
-    
-  @property
-  def extensions(self):
-    return self.server.extensions
-
-extension_manager = ExtensionManager()
-"""global extensionManager variable"""
-
-
-def get_extension_manager():
-  return extension_manager
+  def on_save(self):
+    #fallback, if not defined by the implementing class
+    logger.debug('on_save not defined')
+    pass

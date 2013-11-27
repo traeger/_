@@ -24,8 +24,7 @@ THE SOFTWARE.
 
 import geventwebsocket
 import json
-import dispatcher
-
+import client
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,43 +39,38 @@ class ConnectionManager(object):
 
 
   def add_connection(self,  client_protocol):
+    """
+    client_protocol - socket abstraction
+      send_message(UString)
+    """
     self.__counter += 1
     self.__con[self.__counter] = client_protocol
-    self.__remote_listener[self.__counter] = dispatcher.RemoteListener(self.__counter)
+    self.__remote_listener[self.__counter] = client.RemoteListener(self.__counter)
     return self.__counter
 
   def remove_connection(self, client_id):
     if client_id in self.__con:
       del self.__con[client_id]
     if client_id in self.__remote_listener:
+      self.__remote_listener[client_id].close()
       del self.__remote_listener[client_id]
 
-  def send_to_client(self, client_id, event):
+  def send_to_client(self, client_id, type, data):
     if client_id in self.__con:
-      self.__con[client_id].send_message(json.dumps(event))
+      self.__con[client_id].send_message(json.dumps({'type':type, 'data': data}))
 
   def message_from_client(self, client_id, message):
     if client_id in self.__remote_listener:
-      self.__remote_listener[client_id].callback_from_client(json.loads(message))
-
-  def add_remote_listener(self, client_id, remote_listener):
-    self.__remote_listener[client_id] = remote_listener
-
-  def remove_remote_listener(self, client_id):
-    if client_id in self.__remote_listener:
-      del self.__con[client_id]
-
+      json_message = json.loads(message)
+      self.__remote_listener[client_id].callback_from_client(json_message['type'], json_message['data'])
 
 con_man = ConnectionManager()
-
-
 def get_connection_manager():
   return con_man
 
 class ClientProtocol(geventwebsocket.protocols.base.BaseProtocol):
 
   def __init__(self, app):
-    self.__d = dispatcher.get_dispatcher()
     self.__client_id = 0
     self._app = app
 
