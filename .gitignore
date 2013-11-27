@@ -1,5 +1,12 @@
 *.py[cod]
 
+# pycharm project data
+.idea/
+
+#gedit backup files
+
+*.*~
+
 # C extensions
 *.so
 

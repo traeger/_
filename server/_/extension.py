@@ -22,82 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import json
+from net import ServerSocket
 
+import thread
 import logging
 logger = logging.getLogger(__name__)
 
-class ServerWrapper():
-  def __init__(self, server):
-    self.server = server
-    self.msgHandler = {}
-    
-  """
-  send a message through the websocket
-  """
-  def send(self, msgtype, data):
-    # the message is expected to be a json string
-    # of the form: {type: MSGTYPE, data: MSGDATA}
-    jsonMsg = json.dumps({u'type': msgtype, u'data': data})
-    logger.info('send:' + jsonMsg)
-    self.server.send(jsonMsg)
-  
-  def on_message(self, jsonMsg):
-    # the message is expected to be a json string
-    # of the form: {type: MSGTYPE, data: MSGDATA}
-    msg = json.loads(jsonMsg)
-    logger.info('recieved: + ' + str(msg))
-    
-    msgtype = msg[u'type']
-    msgdata = msg[u'data']
-    if not msgtype in self.msgHandler:
-      self.on_unknown_message_type(msgtype, msgdata)
-      return
-    
-    handler = self.msgHandler[msgtype]
-    handler(msgdata)
-    
-  def on_unknown_message_type(self, msgtype, msgdata):
-    logger.info('unkown message type: ' + str(msgtype) + ' msgdata: ' + str(msgdata))
-    
-  def addMessageHandler(self, msgtype, message_handler):
-    self.msgHandler[msgtype] = message_handler
-    
-  def sleep(self, time):
-    self.server.sleep(time)
 
 class ExtensionManager():
+
   def __init__(self):
     self.extensions = {}
   
-  def bindServer(self, serverImpl, port):
-    outer = self
-    class Server(serverImpl):
-      # called when an connection is created and open
-      def on_open(self):
-        # create our message dispatcher
-        self.dispatcher = ServerWrapper(self)
-        
-        # create extension instances
-        self.extensions = {}
-        for k in outer.extensions:
-          self.extensions[k] = outer.extensions[k](self, self.dispatcher)
-        
-        # on setup
-        for k in outer.extensions:
-          self.extensions[k].on_setup()
-          
-        # on connect
-        for k in outer.extensions:
-          self.extensions[k].on_connect()
-      
-      def on_message(self, msg):
-        self.dispatcher.on_message(msg)
-        
-    Server.bindOnPort(Server, port)
-    
-  def addExtension(self, name, extensionName):
-    self.extensions[name] = extensionName
+  def bindServer(self, port):
+    thread.start_new_thread(ServerSocket.start(port))
+
+  def addExtension(self, name, extension_name):
+    self.extensions[name] = extension_name
 
 class Extension:
   def __init__(self, server, dispatcher):
@@ -131,3 +72,10 @@ class Extension:
   @property
   def extensions(self):
     return self.server.extensions
+
+extension_manager = ExtensionManager()
+"""global extensionManager variable"""
+
+
+def get_extension_manager():
+  return extension_manager

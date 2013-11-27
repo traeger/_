@@ -23,16 +23,17 @@ THE SOFTWARE.
 """
 
 import os, sys
-sys.path[0] = os.path.join(sys.path[0],'server')
-print sys.path
+
+#sys.path[0] = os.path.join(sys.path[0], 'server')
+#print sys.path
 
 import random
 import string
 
 import numpy
-from _.extension import Extension, ExtensionManager
-from _.extensions.base import ExtensionBase
-from _.webSocketServer import WebSocketServer
+from server._ import dispatcher, extension
+from server._.extension import Extension
+from server._.extensions.base import ExtensionBase
 
 import logging
 logger = logging.getLogger(__name__)
@@ -58,7 +59,11 @@ class ExtensionTest(Extension):
           cy + self.exBase.player.pc[1]
         )
         
-manager = ExtensionManager()
+manager = extension.get_extension_manager()
 manager.addExtension('base', ExtensionBase)
 manager.addExtension('test', ExtensionTest)
-manager.bindServer(WebSocketServer, 10000)
+manager.bindServer(10000)
+
+#main game loop:
+while True:
+  dispatcher.get_dispatcher().update()
