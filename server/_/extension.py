@@ -22,19 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+import dispatcher
+
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 class ExtensionManager:
+  def __init__(self):
+    self.__extensions = {}
+
   def create_extension(self, user, id, remoteListener):
+    logger.info("creating extension for " + str(user) + " with id " + str(id) + "...")
+  
     es = {}
-    for name, ext in __extensions:
+    for name, ext in self.__extensions.iteritems():
       e = ext(user,id,remoteListener) # merken zum loeschen
       es[name] = e
-    for e in es:
-      e.__extensions = es
-    for e in es:
+    print es
+      
+    for e in es.itervalues():
+      e.extensions = es
+    for e in es.itervalues():
       e.on_setup()
+    for e in es.itervalues():
+      e.on_start()
+      
+    logger.info("extension created for " + str(user) + " with id " + str(id))
     
   def add_extension(self, name, extension_name):
     self.__extensions[name] = extension_name
+
+extension_manager = ExtensionManager()
+def get_extension_manager():
+  return extension_manager
 
 class Extension:
   def __init__(self, user,id,remoteListener):
@@ -44,7 +65,7 @@ class Extension:
     self.__remoteListener = remoteListener  
 
   def get_extension(self, name):
-    self.__extensions[name]
+    return self.extensions[name]
     
   def add_client_listener(self, type):
     self.__remoteListener.register(type)
@@ -56,11 +77,16 @@ class Extension:
     self.__d.add_listener(listener, type)
     
   def send(self, type, data):
-    self.__d.queue(type, data, [self.__id])
+    self.__d.enqueue(type, data, [self.__id])
 
   def on_setup(self):
     #fallback, if not defined by the implementing class
     logger.debug('on_setup not defined')
+    pass
+    
+  def on_start(self):
+    #fallback, if not defined by the implementing class
+    logger.debug('on_start not defined')
     pass
 
   def on_destroy(self):

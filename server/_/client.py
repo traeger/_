@@ -1,13 +1,17 @@
 import dispatcher
+import extension
+from collections import deque
+
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class ClientManager:
   __dispatcher = dispatcher.get_dispatcher()
-
-  def __init__(self):
-    self.__dispatcher.add_listener(self.on_login, "login")
+  __extensionManager = extension.get_extension_manager()
 
   def login(self, user, password, id, remoteListener):
-    self.__extensionManager.createExtension(user, id, remoteListener)
+    self.__extensionManager.create_extension(user, id, remoteListener)
     
     return True
     
@@ -47,10 +51,12 @@ class RemoteListener(object):
     self.__dispatcher.remove_listeners_for_client(self.__ID)
     
   def callback_from_client(self, type, data):
+    logger.debug("from client: " + str(type) + " data: " + str(data))
+  
     """receives an event from the client and inserts it into the event queue"""
     #TODO sanatize input here!
     
-    if type is "login" and not self.__registered:
+    if type == u'login' and not self.__registered:
       user = data['user']
       password = data['password']
       self.__registered = client_manager.login(user, password, self.__ID, self)
@@ -61,13 +67,13 @@ class RemoteListener(object):
     
     #TODO maybe process listener-add/remove-requests here
     if self.__registered:
-      self.__dispatcher.queue(type, data, [self.__ID])
+      self.__dispatcher.enqueue(type, data, [self.__ID])
     else:
       self.__queue.append((type, data, [self.__ID]))
       
   def __deque(self):
     """ deques __queue into the event system """
     for (type, data, ids) in self.__queue:
-      self.__dispatcher.queue(type, data, ids)
+      self.__dispatcher.enqueue(type, data, ids)
     self.__queue.clear()
     del self.__queue

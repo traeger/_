@@ -78,6 +78,7 @@ class ClientProtocol(geventwebsocket.protocols.base.BaseProtocol):
     self.__client_id = con_man.add_connection(self)
 
   def on_message(self, message):
+    logger.info(message)
     con_man.message_from_client(self.__client_id, message)
 
   def on_close(self):

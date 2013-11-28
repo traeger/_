@@ -22,19 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import os, sys
+import os, sys, time
 
-#sys.path[0] = os.path.join(sys.path[0], 'server')
-#print sys.path
+sys.path[0] = os.path.join(sys.path[0], 'server')
+print sys.path
 
 import random
 import string
 import thread
 
 import numpy
-from server._ import dispatcher, extension
-from server._.extension import Extension
-from server._.extensions.base import ExtensionBase
+from _ import dispatcher, extension, net
+from _.extension import Extension
+from _.extensions.base import ExtensionBase
 
 import logging
 logger = logging.getLogger(__name__)
@@ -44,8 +44,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 class ExtensionTest(Extension):
   def on_setup(self):
-    logger.info('on_setup')
+    logger.info('test: on_setup')
     self.exBase = self.get_extension('base')
+    
+  def on_start(self):
     self.send_initial()
     
   def send_initial(self):
@@ -57,11 +59,20 @@ class ExtensionTest(Extension):
           cy + self.exBase.player.pc[1]
         )
         
-manager = extension.get_extension_manager()
-manager.addExtension('base', ExtensionBase)
-manager.addExtension('test', ExtensionTest)
-thread.start_new_thread(ServerSocket.start(10000))
+def main_loop():
+  #main game loop:
+  while True:
+    dispatcher.get_dispatcher().update()
+    time.sleep(1)
 
-#main game loop:
-while True:
-  dispatcher.get_dispatcher().update()
+        
+manager = extension.get_extension_manager()
+manager.add_extension('base', ExtensionBase)
+manager.add_extension('test', ExtensionTest)
+
+
+
+thread.start_new_thread(main_loop,())
+
+net.ServerSocket.start(10000)
+

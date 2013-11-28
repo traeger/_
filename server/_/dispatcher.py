@@ -27,6 +27,9 @@ import extension
 from collections import deque
 import threading
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 def create_event(message_type, data,  dst=[]):
   """
@@ -44,6 +47,8 @@ class Dispatcher(object):
     self.__queue = [deque(), deque()]
    
   def add_listener(self, listener, message_type, id=None):
+    logger.info("listerer add " + str(message_type) + "id: " + str(id))
+    
     """adds a listener for a message_type (e.g. ('type', 1) ) to the event manager"""
     if not (message_type, id) in self.__listener_map:
       self.__listener_map[(message_type, id)] = [listener]
@@ -55,6 +60,8 @@ class Dispatcher(object):
     return False
   
   def remove_listener(self, listener, message_type, id=None):
+    logger.info("listerer remove " + str(message_type) + "id: " + str(id))
+  
     """removes the listener for message_type from the event manager if possible"""
     if (message_type, id) in self.__listener_map:
       l = self.__listener_map[(message_type, id)]
@@ -68,17 +75,23 @@ class Dispatcher(object):
   def remove_listeners_for_client(self, id):
     pass #TODO 
     
-  def __queue(self, event):
+  def __enqueue(self, event):
+    logger.debug("event enqueue " + str(event))
+  
     """adds the event to the active queue of the event manager"""
     self.__lock.acquire()
     self.__queue[self.__active_queue].append(event)
     self.__lock.release()
           
   def __trigger(self, event):
+    logger.debug("event trigger " + str(event))
+  
     """fires the event right away, skipping the queue."""
     self.__process_event(event)
     
   def abort(self, event):
+    logger.debug("event abort " + str(event))
+  
     """removes the event from the active queue. 
     If update is already called, the event cannot be aborted anymore
     """
@@ -88,10 +101,10 @@ class Dispatcher(object):
       q.remove(event)
     self.__lock.release()
     
-  def queue(self, message_type, data, dst=[]):
+  def enqueue(self, message_type, data, dst=[]):
     """adds the event to the active queue of the event manager"""
     event = create_event(message_type, data, dst)
-    self.__queue(event)
+    self.__enqueue(event)
     return event
     
   def trigger(self, message_type, data, dst=[]):
@@ -106,10 +119,13 @@ class Dispatcher(object):
     
     !DANGER! CALL THIS METHOD IN ONE THREAD ONLY !DANGER!  
     """
+    print 'update'
+
     self.__lock.acquire()
     q = self.__queue[self.__active_queue]    
-    self.__active_queue += 1 % 2; #switching queues to prevent event loops
+    self.__active_queue = (self.__active_queue + 1) % 2; #switching queues to prevent event loops
     self.__lock.release()
+    logger.debug('queue: ' +str(q))
     while q:
       event = q.popleft()
       self.__process_event(event)
@@ -121,8 +137,10 @@ class Dispatcher(object):
       for listener in l: listener(event[u'type'], event[u'data'])
       
   def __process_event(self, event):
+    logger.info("event process " + str(event))
+  
     """executes all listeners for the event."""
-    message_type = event['type']
+    message_type = event[u'type']
     self.__call_listeners_for_message_type((message_type, None), event)
     for i in event['dst']:
       self.__call_listeners_for_message_type((message_type, i), event)

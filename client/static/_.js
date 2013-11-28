@@ -42,7 +42,7 @@ _ = new function() { var _ = this;
      */
     var logger = new function() {};
     logger.error = function(msg) {console.error(msg)}
-    logger.info = function(msg) {return; console.log(msg)}
+    logger.info = function(msg) {console.log(msg)}
 
     _.start = function() {
         _.connect()
