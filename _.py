@@ -63,7 +63,7 @@ def main_loop():
   #main game loop:
   while True:
     dispatcher.get_dispatcher().update()
-    time.sleep(1)
+    time.sleep(0.1)
 
         
 manager = extension.get_extension_manager()
@@ -73,6 +73,4 @@ manager.add_extension('test', ExtensionTest)
 
 
 thread.start_new_thread(main_loop,())
-
-net.ServerSocket.start(10000)
-
+net.start_server(10000)

@@ -119,13 +119,10 @@ class Dispatcher(object):
     
     !DANGER! CALL THIS METHOD IN ONE THREAD ONLY !DANGER!  
     """
-    print 'update'
-
     self.__lock.acquire()
     q = self.__queue[self.__active_queue]    
     self.__active_queue = (self.__active_queue + 1) % 2; #switching queues to prevent event loops
     self.__lock.release()
-    logger.debug('queue: ' +str(q))
     while q:
       event = q.popleft()
       self.__process_event(event)

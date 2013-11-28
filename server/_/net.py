@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import geventwebsocket
+from twisted.internet import reactor
+from autobahn.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
+
 import json
 import client
 
@@ -68,35 +70,28 @@ con_man = ConnectionManager()
 def get_connection_manager():
   return con_man
 
-class ClientProtocol(geventwebsocket.protocols.base.BaseProtocol):
+class ServerProtocol(WebSocketServerProtocol):
 
-  def __init__(self, app):
+  def __init__(self):
     self.__client_id = 0
-    self._app = app
 
-  def on_open(self):
+  def onOpen(self):
     self.__client_id = con_man.add_connection(self)
-
-  def on_message(self, message):
+    
+  def onMessage(self, message, binary):
     logger.info(message)
     con_man.message_from_client(self.__client_id, message)
 
-  def on_close(self):
+  def onClose(self, wasClean, code, reason):
     con_man.remove_connection(self.__client_id)
 
   def send_message(self, message):
-    self._app.ws.send(message)
+    print '-----SEND SEND SEND -------- '
+    #self.sendMessage(message, sync=False, doNotCompress=True)
+    reactor.callFromThread(self.sendMessage, message)
 
-
-class ServerSocket(geventwebsocket.WebSocketApplication):
-
-  def build_protocol(self):
-    return ClientProtocol(self)
-  
-  @classmethod
-  def start(cls, port):
-    s = geventwebsocket.WebSocketServer(
-      ('', port),
-      geventwebsocket.Resource({'/': ServerSocket})
-    )
-    s.serve_forever()
+def start_server(port):
+  factory = WebSocketServerFactory("ws://localhost:" + str(port), debug = False)
+  factory.protocol = ServerProtocol
+  listenWS(factory)
+  reactor.run()
