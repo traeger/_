@@ -78,6 +78,9 @@ class Extension:
     
   def send(self, type, data):
     self.__d.enqueue(type, data, [self.__id])
+    
+  def send_global(self, type, data):
+    self.__d.enqueue(type, data)
 
   def on_setup(self):
     #fallback, if not defined by the implementing class
