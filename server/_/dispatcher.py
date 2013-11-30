@@ -134,9 +134,9 @@ class Dispatcher(object):
       for listener in l: listener(event[u'type'], event[u'data'])
       
   def __process_event(self, event):
-    logger.info("event process " + str(event))
-  
     """executes all listeners for the event."""
+    logger.debug("event process " + str(event))
+    
     message_type = event[u'type']
     self.__call_listeners_for_message_type((message_type, None), event)
     for i in event['dst']:

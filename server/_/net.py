@@ -86,8 +86,6 @@ class ServerProtocol(WebSocketServerProtocol):
     con_man.remove_connection(self.__client_id)
 
   def send_message(self, message):
-    print '-----SEND SEND SEND -------- '
-    #self.sendMessage(message, sync=False, doNotCompress=True)
     reactor.callFromThread(self.sendMessage, message)
 
 def start_server(port):
