@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.DEBUG)
 class ExtensionTest(Extension):
   def on_setup(self):
     logger.info('test: on_setup')
-    self.exBase = self.get_extension('base')
+    self.exBase = self.extensions['base']
     
   def on_start(self):
     self.send_initial()

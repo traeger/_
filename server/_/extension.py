@@ -63,9 +63,6 @@ class Extension:
     self.__id = id
     self.__d = dispatcher.get_dispatcher()
     self.__remoteListener = remoteListener  
-
-  def get_extension(self, name):
-    return self.extensions[name]
     
   def add_client_listener(self, type):
     self.__remoteListener.register(type)
