@@ -139,6 +139,8 @@ _graphicsDOMX = new function() { var _graphics = this;
       variation = tiledata.variation;
     }
     
+    if(!tile[variation]) log.error('variation not found: ' + variation);
+    
     var ox = tile[variation].x;
     var oy = tile[variation].y;
     

@@ -32,6 +32,21 @@ _vis = new function() { var _vis = this;
         }}
         return true;
     }
+    
+    var isPositive = function(vs) {
+        return ands(vs, function (v) {return v >= 0})
+    }
+    
+    var isAbsGreater2 = function(vs) {
+        return ands(vs, function (v) {return Math.abs(v) >= 2})
+    }
+    
+    var ands = function(vs, f) {
+    	for (var key in vs) {
+            if(!f(vs[key])) return false
+        }
+        return true;
+    }
 
     _vis.tileVariationForWall = function(cc, c0, c1, c2, c3, c4, c5, c6, c7, swap) {
         if (swap) {
@@ -106,7 +121,7 @@ _vis = new function() { var _vis = this;
         if(is(cc, [c1,c6], [c2])) return [3];
         if(is(cc, [c1,c6], [c0,c4])) return [3];
         
-        return [23];
+        return [0];
     }
     
     /*
@@ -129,8 +144,16 @@ _vis = new function() { var _vis = this;
                 if (!is('W', false, [c0, c1, c2, c3, c4, c5, c6, c7])) {
                       d=[{setname: 'terrain_grass', tilename: 'water', variation:'all', z: -1},
                          {setname: 'terrain_grass', tilename: 'cliff1', variation:_vis.tileVariationForWall_Format_('W', c0, c1, c2, c3, c4, c5, c6, c7, true), z: -1}];
+                } else if (is(0, [h0, h1, h2, h3, h4, h5, h6, h7])) {
+                	  d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0}];
+                } else if (!isAbsGreater2([h0, h1, h2, h3, h4, h5, h6, h7])) {
+                      p = isPositive([h0, h1, h2, h3, h4, h5, h6, h7])
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
+                         {setname: 'terrain_grass', tilename: 'ramp', variation:_vis.tileVariationForWall_Format_(0, h0, h1, h2, h3, h4, h5, h6, h7, !p), z: 0}];
                 } else {
-                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0}];
+                      p = isPositive([h0, h1, h2, h3, h4, h5, h6, h7])
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
+                         {setname: 'terrain_grass', tilename: 'cliff2', variation:_vis.tileVariationForWall_Format_(0, h0, h1, h2, h3, h4, h5, h6, h7, !p), z: 0}];
                 }
                 break;
             }
