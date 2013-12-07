@@ -37,8 +37,8 @@ _vis = new function() { var _vis = this;
         return ands(vs, function (v) {return v >= 0})
     }
     
-    var isAbsGreater2 = function(vs) {
-        return ands(vs, function (v) {return Math.abs(v) >= 2})
+    var isGreater2 = function(vs) {
+        return ors(vs, function (v) {return v >= 2})
     }
     
     var ands = function(vs, f) {
@@ -46,6 +46,13 @@ _vis = new function() { var _vis = this;
             if(!f(vs[key])) return false
         }
         return true;
+    }
+    
+    var ors = function(vs, f) {
+    	for (var key in vs) {
+            if(f(vs[key])) return true
+        }
+        return false;
     }
 
     _vis.tileVariationForWall = function(cc, c0, c1, c2, c3, c4, c5, c6, c7, swap) {
@@ -124,6 +131,10 @@ _vis = new function() { var _vis = this;
         return [0];
     }
     
+    _vis.tileVariationForRamp_Format = function(cc, c0, c1, c2, c3, c4, c5, c6, c7, swap) {
+        return _vis.tileVariationForWall_Format_(true, cc<=c0, cc<=c1, cc<=c2, cc<=c3, cc<=c4, cc<=c5, cc<=c6, cc<=c7, false);
+    }
+    
     /*
      *       c0         
      *    c1    c2      
@@ -146,14 +157,14 @@ _vis = new function() { var _vis = this;
                          {setname: 'terrain_grass', tilename: 'cliff1', variation:_vis.tileVariationForWall_Format_('W', c0, c1, c2, c3, c4, c5, c6, c7, true), z: -1}];
                 } else if (is(0, [h0, h1, h2, h3, h4, h5, h6, h7])) {
                 	  d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0}];
-                } else if (!isAbsGreater2([h0, h1, h2, h3, h4, h5, h6, h7])) {
-                      p = isPositive([h0, h1, h2, h3, h4, h5, h6, h7])
-                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
-                         {setname: 'terrain_grass', tilename: 'ramp', variation:_vis.tileVariationForWall_Format_(0, h0, h1, h2, h3, h4, h5, h6, h7, !p), z: 0}];
+                } else if (isPositive([h0, h1, h2, h3, h4, h5, h6, h7])) {
+                	  d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0}];
+                } else if (isGreater2([-h1, -h2, -h5, -h6])){
+            	      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: -1},
+                         {setname: 'terrain_grass', tilename: 'cliff1', variation:_vis.tileVariationForRamp_Format(0, h0, h1, h2, h3, h4, h5, h6, h7), z: -1}];
                 } else {
-                      p = isPositive([h0, h1, h2, h3, h4, h5, h6, h7])
-                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: 0},
-                         {setname: 'terrain_grass', tilename: 'cliff2', variation:_vis.tileVariationForWall_Format_(0, h0, h1, h2, h3, h4, h5, h6, h7, !p), z: 0}];
+                      d=[{setname: 'terrain_grass', tilename: 'floor', variation:'all', z: -0.5},
+                         {setname: 'terrain_grass', tilename: 'ramp', variation:_vis.tileVariationForRamp_Format(0, h0, h1, h2, h3, h4, h5, h6, h7), z: -0.5}];
                 }
                 break;
             }

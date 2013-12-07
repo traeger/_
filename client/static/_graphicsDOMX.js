@@ -30,6 +30,7 @@ _graphicsDOMX = new function() { var _graphics = this;
   var VIEW_XS
   var VIEW_YS
   var CHUNK_SIZE = _.CHUNK_SIZE;
+  var MAX_ZINDEX = 2147483638
   
   /* number of chucks which stay in the view messured from the chuck the player
    * is in.
@@ -104,7 +105,7 @@ _graphicsDOMX = new function() { var _graphics = this;
     css('._renderingWindowDOM .chunk', '{position: absolute;}');
     css('._renderingWindowDOM .tile', '{position: absolute; display: table;opacity : 1.0;}');
     css('._renderingWindowDOM .tilepart', '{position: absolute; display: table;opacity : 1.0;}');
-    css('._renderingWindowDOM .tile p', '{display: table-cell; vertical-align: middle; text-align: center;font-size: 10px; opacity : 1.0;}');
+    css('._renderingWindowDOM .tile span', '{position: absolute; z-index: '+MAX_ZINDEX+'; display: table-cell; vertical-align: middle; text-align: center;font-size: 10px; opacity : 1.0;}');
   }
   
   _graphics.createTile = function(tiledata, i, j, randomValue) {
@@ -118,8 +119,11 @@ _graphicsDOMX = new function() { var _graphics = this;
       multitile.append(tile);
     }
     
-    //var content = $('<p>'+i+'.'+j+'</p>');
-    //multitile.append(content);
+    var content = $('<span>AZ</span>');
+    content.css({
+      'width': (TILE_XS) + 'px'
+    });
+    multitile.append(content);
     
     return multitile;
   }
@@ -261,13 +265,17 @@ _graphicsDOMX = new function() { var _graphics = this;
     /* prepate object rendering */
     var objects = _.chunk        (cx, cy).view('objects')
     
+    var h_offset = 90;
+    
     for (var j = 0; j < CHUNK_SIZE; j++) {
       var ay = j + cy * CHUNK_SIZE;
       for (var i = 0; i < CHUNK_SIZE; i++) {
         var ax = i + cx * CHUNK_SIZE;
         var tile_x = (CHUNK_SIZE - 1 + i - j) * TILE_XS_HALF   // M2VX
         var tile_y = (i + j) * TILE_YS_HALF                    // M2VY
-        var z = ax+ay
+        var h = height.get(i, j);
+        tile_y -= (h-h_offset) * TILE_YS_HALF;
+        var z = ax+ay+h
         /* pick one 'pseudo'-random value for each cell of the chunk, the order
          * of iteration has to be the same whenever generating the same chunk
          * to ensure to get the same 'pseudo'-random value for each cell */
@@ -284,7 +292,6 @@ _graphicsDOMX = new function() { var _graphics = this;
            *    c5    c6           +0.+1       +1.+0            
            *       c7                    +1.+1               
            */ 
-          var h = height.get(i, j);
           var tile = _graphics.terrainTileMapper(
             terrain.get(i    , j  ), // cc
             terrain.get(i-1  , j-1), // c0
@@ -292,11 +299,11 @@ _graphicsDOMX = new function() { var _graphics = this;
             terrain.get(i-1  , j+1), terrain.get(i+1  , j-1), // c3, c4
             terrain.get(i+0  , j+1), terrain.get(i+1  , j+0), // c5, c6
             terrain.get(i+1  , j+1), // c7
-            h - height.get(i-1  , j-1), // h0
-            h - height.get(i-1  , j+0), h - height.get(i+0  , j-1), // h1, h2
-            h - height.get(i-1  , j+1), h - height.get(i+1  , j-1), // h3, h4
-            h - height.get(i+0  , j+1), h - height.get(i+1  , j+0), // h5, h6
-            h - height.get(i+1  , j+1) // h7
+            height.get(i-1  , j-1) - h, // h0
+            height.get(i-1  , j+0) - h, height.get(i+0  , j-1) - h, // h1, h2
+            height.get(i-1  , j+1) - h, height.get(i+1  , j-1) - h, // h3, h4
+            height.get(i+0  , j+1) - h, height.get(i+1  , j+0) - h, // h5, h6
+            height.get(i+1  , j+1) - h // h7
           )
           if(tile) {
             var tileElem = _graphics.createTile(tile, ax, ay, randomValue)
@@ -309,6 +316,9 @@ _graphicsDOMX = new function() { var _graphics = this;
               $(this).css({
                 'z-index': (z + zoffset)  
               });
+            });
+            tileElem.children('span').each(function() {
+              $(this).text(h);
             });
             chunkElem.append(tileElem);
           }
