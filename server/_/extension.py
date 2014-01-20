@@ -22,112 +22,79 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import json
+import dispatcher
 
 import logging
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-class ServerWrapper():
-  def __init__(self, server):
-    self.server = server
-    self.msgHandler = {}
-    
-  """
-  send a message through the websocket
-  """
-  def send(self, msgtype, data):
-    # the message is expected to be a json string
-    # of the form: {type: MSGTYPE, data: MSGDATA}
-    jsonMsg = json.dumps({u'type': msgtype, u'data': data})
-    logger.info('send:' + jsonMsg)
-    self.server.send(jsonMsg)
-  
-  def on_message(self, jsonMsg):
-    # the message is expected to be a json string
-    # of the form: {type: MSGTYPE, data: MSGDATA}
-    msg = json.loads(jsonMsg)
-    logger.info('recieved: + ' + str(msg))
-    
-    msgtype = msg[u'type']
-    msgdata = msg[u'data']
-    if not msgtype in self.msgHandler:
-      self.on_unknown_message_type(msgtype, msgdata)
-      return
-    
-    handler = self.msgHandler[msgtype]
-    handler(msgdata)
-    
-  def on_unknown_message_type(self, msgtype, msgdata):
-    logger.info('unkown message type: ' + str(msgtype) + ' msgdata: ' + str(msgdata))
-    
-  def addMessageHandler(self, msgtype, message_handler):
-    self.msgHandler[msgtype] = message_handler
-    
-  def sleep(self, time):
-    self.server.sleep(time)
-
-class ExtensionManager():
+class ExtensionManager:
   def __init__(self):
-    self.extensions = {}
+    self.__extensions = {}
+
+  def create_extension(self, user, id, remoteListener):
+    logger.info("creating extension for " + str(user) + " with id " + str(id) + "...")
   
-  def bindServer(self, serverImpl, port):
-    outer = self
-    class Server(serverImpl):
-      # called when an connection is created and open
-      def on_open(self):
-        # create our message dispatcher
-        self.dispatcher = ServerWrapper(self)
-        
-        # create extension instances
-        self.extensions = {}
-        for k in outer.extensions:
-          self.extensions[k] = outer.extensions[k](self, self.dispatcher)
-        
-        # on setup
-        for k in outer.extensions:
-          self.extensions[k].on_setup()
-          
-        # on connect
-        for k in outer.extensions:
-          self.extensions[k].on_connect()
+    es = {}
+    for name, ext in self.__extensions.iteritems():
+      e = ext(user,id,remoteListener) # merken zum loeschen
+      es[name] = e
+    print es
       
-      def on_message(self, msg):
-        self.dispatcher.on_message(msg)
-        
-    Server.bindOnPort(Server, port)
+    for e in es.itervalues():
+      e.extensions = es
+    for e in es.itervalues():
+      e.on_setup()
+    for e in es.itervalues():
+      e.on_start()
+      
+    logger.info("extension created for " + str(user) + " with id " + str(id))
     
-  def addExtension(self, name, extensionName):
-    self.extensions[name] = extensionName
+  def add_extension(self, name, extension_name):
+    self.__extensions[name] = extension_name
+
+extension_manager = ExtensionManager()
+def get_extension_manager():
+  return extension_manager
 
 class Extension:
-  def __init__(self, server, dispatcher):
-    self.server = server
-    self.dispatcher = dispatcher
+  def __init__(self, user,id,remoteListener):
+    self.__user = user
+    self.__id = id
+    self.__d = dispatcher.get_dispatcher()
+    self.__remoteListener = remoteListener  
     
+  def add_client_listener(self, type):
+    self.__remoteListener.register(type)
+  
+  def add_listener(self, listener, type):
+    self.__d.add_listener(listener, type, self.__id)
+    
+  def add_listener_global(self, listener, type):
+    self.__d.add_listener(listener, type)
+    
+  def send(self, type, data):
+    self.__d.enqueue(type, data, [self.__id])
+    
+  def send_global(self, type, data):
+    self.__d.enqueue(type, data)
+
   def on_setup(self):
     #fallback, if not defined by the implementing class
     logger.debug('on_setup not defined')
     pass
-  
-  def on_connect(self):
+    
+  def on_start(self):
     #fallback, if not defined by the implementing class
-    logger.debug('on_connect not defined')
+    logger.debug('on_start not defined')
     pass
-  
-  def on_message(self, msgtype, msgdata):
+
+  def on_destroy(self):
     #fallback, if not defined by the implementing class
-    logger.debug('on_message not defined, message: ' + str(msgtype) + ':' + str(msgdata))
+    logger.debug('on_destroy not defined')
     pass
     
-  def addMessageHandler(self, msgtype, message_handler):
-    self.dispatcher.addMessageHandler(msgtype, message_handler)
-    
-  def sleep(self, time):
-    self.server.sleep(time)
-    
-  def send(self, msgtype, msgdata):
-    self.dispatcher.send(msgtype, msgdata)
-    
-  @property
-  def extensions(self):
-    return self.server.extensions
+  def on_save(self):
+    #fallback, if not defined by the implementing class
+    logger.debug('on_save not defined')
+    pass

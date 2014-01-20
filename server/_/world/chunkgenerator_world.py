@@ -26,8 +26,8 @@ from random import Random
 import sys
 
 import numpy
-from _.math.discreateDistribution import DiscreateDistribution
-from _.math.cellularAutomata import CellularAutomata, CAIter
+from _.mathutils.discreateDistribution import DiscreateDistribution
+from _.mathutils.cellularAutomata import CellularAutomata, CAIter
 from _.world.world import World
 from _.constants import *
 

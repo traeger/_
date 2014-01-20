@@ -42,13 +42,17 @@ _ = new function() { var _ = this;
      */
     var logger = new function() {};
     logger.error = function(msg) {console.error(msg)}
-    logger.info = function(msg) {return; console.log(msg)}
+    logger.info = function(msg) {console.log(msg)}
 
-    _.start = function() {
-        _.connect()
-        _.bindControls()
+    /* onInitialized called when setup is finished */
+    _.start = function(onInitialized) {
+        connect(function() {
+            bindControls();
+            onInitialized();
+        });
     }
-    _.connect = function() {
+    /* onOpen called when connection is estabished */
+    var connect = function(onOpen) {
         /*
          * socket handling
          */
@@ -74,6 +78,7 @@ _ = new function() { var _ = this;
         socket.onopen = function(evt) {
             isopen = true
             $('#_conn #_conn_status').html('<b>Connected</b>');
+            onOpen();
         }
         socket.onerror = function(evt) {
             $('#_conn #_conn_status').html('<b>Error</b>');
@@ -91,6 +96,10 @@ _ = new function() { var _ = this;
             jsonMsg = JSON.stringify({type: msgtype, data: data})
             socket.send(jsonMsg)
         }
+    }
+    
+    _.login = function(user, password) {
+        _.sendMessage('login', {'user':user, 'password':password});
     }
     
     /*
@@ -217,7 +226,7 @@ _ = new function() { var _ = this;
         _.sendMessage('move_delta', direction)
     }
     /* key handler */
-    _.bindControls = function() {
+    var bindControls = function() {
         $(document).keypress(function(event) {
             switch(event.which) {
                 case  97: _.move({x: -1, y:  0}); break;
