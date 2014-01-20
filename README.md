@@ -15,19 +15,14 @@ install
         ```
         $ pip install noise
         ```
-
-    -   gevent-websocket (https://bitbucket.org/Jeffrey/gevent-websocket/)
+    -   twisted
         ```
-        clone the branch 'default' from https://bitbucket.org/Jeffrey/gevent-websocket/src
+        $ pip install twisted
         ```
-        and then install it with:
+    -   autobahn (0.4.7 works fine)
         ```
-        $ python setup.py install
+        $ pip install autobahn
         ```
-    
-        IMPORTANT NOTE
-        ` $ pip install gevent-websocket ` wont work at the time this doc is written! 
-        since the pip version is only 0.3.6 and does not support a non-blocking message recieve.
 
 *   start the _ gameserver _.py with
     ```
