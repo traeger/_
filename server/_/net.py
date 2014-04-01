@@ -23,7 +23,7 @@ THE SOFTWARE.
 """
 
 from twisted.internet import reactor
-from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
+from autobahn.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
 
 import json
 import client
